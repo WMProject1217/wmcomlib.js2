@@ -1,2 +1,2 @@
 # wmcomlib.js_Moduled
-Moduled wmcomlib.js
+wmcomlib.js Moduled JavaScript Function Library
