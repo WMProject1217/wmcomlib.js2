@@ -1,16 +1,18 @@
 /*
-* Copyright(c) A.K.A wmcomlib.js Moduled JavaScript Function Library
+* Copyright(c) A.K.A wmcomlib.js JavaScript Function Library v2
 * WMProject1217 Studios 2024
-* FileName: Module_WindowDanmaku.js
-* FileVersion: 0.1.3
+* FileName: WindowDanmaku.js
+* FileVersion: 0.1.4
 * FileDescription: 快速动态动画子系统
 * Author: WMProject1217
-* LatestCommit: 2025-6-10
+* LatestCommit: 2025-7-1
+*
+* FOR THE DAWN THAT SHALL ARRIVE!
 */
 
 export const id = 'WMWindowDanmaku';
 export const name = 'WMWindowDanmaku';
-export const version = '0.1.3';
+export const version = '0.1.4';
 export const description = 'Moduled WMWindowDanmaku.js';
 
 let SystemContext;

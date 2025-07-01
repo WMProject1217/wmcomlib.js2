@@ -1,16 +1,18 @@
 /*
-* Copyright(c) A.K.A wmcomlib.js Moduled JavaScript Function Library
+* Copyright(c) A.K.A wmcomlib.js JavaScript Function Library v2
 * WMProject1217 Studios 2024
-* FileName: Module_AssetsLoader.js
-* FileVersion: 0.2.1
+* FileName: AssetsLoader.js
+* FileVersion: 0.2.2
 * FileDescription: 资源加载子系统
 * Author: WMProject1217
-* LatestCommit: 2025-6-10
+* LatestCommit: 2025-7-1
+*
+* FOR THE DAWN THAT SHALL ARRIVE!
 */
 
 export const id = 'WMAssetsLoader';
 export const name = 'WMAssetsLoader';
-export const version = '0.2.1';
+export const version = '0.2.2';
 export const description = 'Moduled WMAssetsLoader.js';
 
 let SystemContext;

@@ -1,16 +1,18 @@
 /*
-* Copyright(c) A.K.A wmcomlib.js Moduled JavaScript Function Library
+* Copyright(c) A.K.A wmcomlib.js JavaScript Function Library v2
 * WMProject1217 Studios 2024
-* FileName: Module_ElysianEngine.js
-* FileVersion: 1.6.1
+* FileName: ElysianEngine.js
+* FileVersion: 1.6.3
 * FileDescription: 剧情播放子系统
 * Author: WMProject1217
-* LatestCommit: 2025-6-9
+* LatestCommit: 2025-7-1
+*
+* FOR THE DAWN THAT SHALL ARRIVE!
 */
 
 export const id = 'ElysianEngine';
 export const name = 'ElysianEngine';
-export const version = '1.6.1';
+export const version = '1.6.3';
 export const description = 'Moduled ElysianEngine.js';
 
 let SystemContext;
@@ -227,7 +229,6 @@ export function PlayScriptSync(data) {
 }
 
 let ElysianEngine = {
-    version: "1.6.0",
     //Base Functions, these functions can also serve other scripts
     FormatizePath: function(path) {
         //标准化路径
@@ -906,7 +907,9 @@ let ElysianEngine = {
                 this.hidecanvas();
             }
             if (this.scriptline.substr(0, 29) == "canvas_drawBackgroundImagePS ") {
-                await this.canvas_drawBackgroundImagePS(await this.loadImageObjectViaPath(this.config.script_chroot + this.scriptline.substr(29)), 16);
+                var pathdx = this.config.script_chroot + this.scriptline.substr(29);
+                if (typeof _genesis_.lib.WMAssetsLoader != 'undefined') { pathdx = await _genesis_.lib.WMAssetsLoader.RequireFileUrlByFileUrl(this.config.script_chroot + this.scriptline.substr(29)); }
+                await this.canvas_drawBackgroundImagePS(await this.loadImageObjectViaPath(pathdx), 16);
             }
             if (this.scriptline.substr(0, 27) == "canvas_drawBackgroundColor ") {
                 this.canvas_drawBackgroundColor(this.scriptline.substr(27));
