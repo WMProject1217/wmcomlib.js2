@@ -2,18 +2,19 @@
 * Copyright(c) A.K.A wmcomlib.js JavaScript Function Library v2
 * WMProject1217 Studios 2024
 * FileName: ElysianEngine.js
-* FileVersion: 1.6.3
+* FileVersion: 1.6.5
 * FileDescription: 剧情播放子系统
 * Author: WMProject1217
-* LatestCommit: 2025-7-1
+* LatestCommit: 2025-10-4
 *
 * FOR THE DAWN THAT SHALL ARRIVE!
 */
 
 export const id = 'ElysianEngine';
-export const name = 'ElysianEngine';
-export const version = '1.6.3';
+export const name = 'ElysianEngine.js';
+export const version = '1.6.5';
 export const description = 'Moduled ElysianEngine.js';
+export const author = 'WMProject1217';
 
 let SystemContext;
 let GlobalMethod_SyncResolve;
@@ -206,9 +207,9 @@ export async function _unload_() {
     }
 }
 
-export function PlayScriptAsync(data, callback) {
+export function PlayScriptAsync(data, callback, config = null) {
     if (ElysianEngine.lock_blockInitialize == 0) {
-        ElysianEngine._init_();
+        ElysianEngine._init_(config);
         GlobalStatus_IsSyncMode = 0;
         GlobalMethod_AsyncCallback = callback;
         ElysianEngine.loadscriptData(data);
@@ -217,9 +218,9 @@ export function PlayScriptAsync(data, callback) {
     }
 }
 
-export function PlayScriptSync(data) {
+export function PlayScriptSync(data, config = null) {
     if (ElysianEngine.lock_blockInitialize == 0) {
-        ElysianEngine._init_();
+        ElysianEngine._init_(config);
         GlobalStatus_IsSyncMode = 1;
         ElysianEngine.loadscriptData(data);
         return new Promise((resolve) => { GlobalMethod_SyncResolve = resolve; });
@@ -762,8 +763,8 @@ let ElysianEngine = {
             return;
         }
         this.lock_blockLoadNewScript = 1;
-        await window.WMAssetsManager.loadIt(window.WMAssetsManager.loadFile(this.FormatizePath(src), "scriptcache"));
-        this.tempscript = await this.readBlobTextViaFileReader(window.WMAssetsManager.requireData("scriptcache"));
+        await _genesis_.lib.AssetsLoader.RequireFileUrlByFileUrl(this.FormatizePath(src));
+        this.tempscript = await this.readBlobTextViaFileReader(_genesis_.lib.AssetsLoader.RequireFileData(this.FormatizePath(src)));
         this.scriptlist = this.tempscript.split("\r\n");
         if (this.scriptlist[0].substr(0, 8) != "!#wmgesh") {
             console.warn("FUCK: NOT STANDARD WMGESH SCRIPT.");
@@ -908,7 +909,7 @@ let ElysianEngine = {
             }
             if (this.scriptline.substr(0, 29) == "canvas_drawBackgroundImagePS ") {
                 var pathdx = this.config.script_chroot + this.scriptline.substr(29);
-                if (typeof _genesis_.lib.WMAssetsLoader != 'undefined') { pathdx = await _genesis_.lib.WMAssetsLoader.RequireFileUrlByFileUrl(this.config.script_chroot + this.scriptline.substr(29)); }
+                if (typeof _genesis_.lib.AssetsLoader != 'undefined') { pathdx = await _genesis_.lib.AssetsLoader.RequireFileUrlByFileUrl(this.config.script_chroot + this.scriptline.substr(29)); }
                 await this.canvas_drawBackgroundImagePS(await this.loadImageObjectViaPath(pathdx), 16);
             }
             if (this.scriptline.substr(0, 27) == "canvas_drawBackgroundColor ") {
@@ -1011,7 +1012,7 @@ let ElysianEngine = {
         this.ep_container.remove();
         this.variblelist = [];
     },
-    _init_: async function(config = this.defaultconfig) {
+    _init_: async function(config = null) {
         //初始化系统
         //无返回
         if (this.lock_blockInitialize == 1) {
@@ -1020,7 +1021,11 @@ let ElysianEngine = {
         }
         this.lock_blockInitialize = 1;
         //initialize environment
-        this.config = config;
+        if (config == null) {
+            this.config = this.defaultconfig
+        } else {
+            this.config = config;
+        }
         this.lock_blockLoadNewScript = 0;
         this.lock_transformingElements = 0;
         this.lock_blockAllUserAction = 0;

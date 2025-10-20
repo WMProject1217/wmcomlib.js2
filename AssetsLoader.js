@@ -2,18 +2,19 @@
 * Copyright(c) A.K.A wmcomlib.js JavaScript Function Library v2
 * WMProject1217 Studios 2024
 * FileName: AssetsLoader.js
-* FileVersion: 0.2.2
+* FileVersion: 0.2.4
 * FileDescription: 资源加载子系统
 * Author: WMProject1217
-* LatestCommit: 2025-7-1
+* LatestCommit: 2025-7-12
 *
 * FOR THE DAWN THAT SHALL ARRIVE!
 */
-
-export const id = 'WMAssetsLoader';
-export const name = 'WMAssetsLoader';
-export const version = '0.2.2';
-export const description = 'Moduled WMAssetsLoader.js';
+export const id = 'AssetsLoader';
+export const name = 'AssetsLoader';
+export const namext = '资源加载子系统';
+export const version = '0.2.4';
+export const description = 'Preloading the files.';
+export const author = 'WMProject1217';
 
 let SystemContext;
 let FileList;
@@ -23,11 +24,20 @@ export async function _init_(context) {
     SystemContext = context;
     FileList = [];
     ErrorHandler = function(str, e = "") { console.error(str, e); };
-    console.log('[WMAssetsLoader]Initializing...');
+    console.log('[AssetsLoader]Initializing...');
 }
 
 export async function _unload_() {
-    console.log('[WMAssetsLoader]Unloading...');
+    console.log('[AssetsLoader]Unloading...');
+    // Release all file objects when unloading
+    FileList.forEach(file => {
+        if (file.data && file.data instanceof Blob && file.readystatus === 2) {
+            if (file.objectUrl) {
+                URL.revokeObjectURL(file.objectUrl);
+            }
+        }
+    });
+    FileList = [];
 }
 
 export function SetErrorHandler(funcdx = function(str, e = "") { console.error(str, e); }) {
@@ -44,6 +54,7 @@ class FileDX {
             this.name = name;
         }
         this.data = undefined;
+        this.objectUrl = undefined;
         this.readystatus = 0; //0 not loaded, 1 loading, 2 loaded, 3 fail, 4 unloaded
     }
 }
@@ -53,7 +64,6 @@ function fetchLocal(url) {
     return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
-            //resolve(new Response(xhr.response, {status: xhr.status}));
             resolve(xhr.response);
         }
         xhr.onerror = function() {
@@ -70,9 +80,11 @@ export function AddFileToList(url, name = undefined) {
     if (name == undefined) { name = url; }
     for (var i = 0; i < FileList.length; i++) {
         if (FileList[i].name == name) {
+            if (FileList[i].objectUrl) { URL.revokeObjectURL(FileList[i].objectUrl); }
             FileList[i].url = url;
             FileList[i].readystatus = 0;
             FileList[i].data = undefined;
+            FileList[i].objectUrl = undefined;
             return i;
         }
     }
@@ -84,7 +96,7 @@ export function AddFileToList(url, name = undefined) {
 function GetProtocolFromUrl(url) {
     let pos = url.indexOf("://");
     if (pos != -1) {
-        return srtdx.substr(0, pos);
+        return url.substr(0, pos);
     }
     return null;
 }
@@ -102,7 +114,6 @@ export async function LoadFileInListById(id) {
             if (!temp_xhr.ok) { throw new Error(`HTTP ERROR ${temp_xhr.status}`); }
             FileList[id].data = await temp_xhr.blob();
             FileList[id].readystatus = 2;
-            //delete temp_xhr;
         } catch(e) {
             ErrorHandler(e.message + e.stack, e);
         }
@@ -161,7 +172,7 @@ export async function LoadFileInListById(id) {
 export async function LoadAllFileInList() {
     for (var i = 0; i < FileList.length; i++) {
         if (FileList[i].readystatus == 0) {
-            await loadIt(i);
+            await LoadFileInListById(i);
         }
     }
     return;
@@ -170,8 +181,11 @@ export async function LoadAllFileInList() {
 export function RequireFileUrl(name) {
     for (var i = 0; i < FileList.length; i++) {
         if (FileList[i].name == name) {
-            let file = new File([FileList[i].data], FileList[i].url, { type: FileList[i].data.type });
-            return window.URL.createObjectURL(file);
+            if (!FileList[i].objectUrl && FileList[i].data) {
+                let file = new File([FileList[i].data], FileList[i].url, { type: FileList[i].data.type });
+                FileList[i].objectUrl = window.URL.createObjectURL(file);
+            }
+            return FileList[i].objectUrl;
         }
     }
     return undefined;
@@ -189,12 +203,30 @@ export function RequireFileData(name) {
 export async function RequireFileUrlByFileUrl(url) {
     for (var i = 0; i < FileList.length; i++) {
         if (FileList[i].url == url) {
-            let file = new File([FileList[i].data], FileList[i].url, { type: FileList[i].data.type });
-            return window.URL.createObjectURL(file);
+            if (!FileList[i].objectUrl && FileList[i].data) {
+                let file = new File([FileList[i].data], FileList[i].url, { type: FileList[i].data.type });
+                FileList[i].objectUrl = window.URL.createObjectURL(file);
+            }
+            return FileList[i].objectUrl;
         }
     }
     let fileid = AddFileToList(url);
     await LoadFileInListById(fileid);
-    let file = new File([FileList[fileid].data], FileList[fileid].url, { type: FileList[fileid].data.type });
-    return window.URL.createObjectURL(file);
+    if (FileList[fileid].data) {
+        let file = new File([FileList[fileid].data], FileList[fileid].url, { type: FileList[fileid].data.type });
+        FileList[fileid].objectUrl = window.URL.createObjectURL(file);
+        return FileList[fileid].objectUrl;
+    }
+    return undefined;
+}
+
+export function RemoveFileFromList(name) {
+    for (let i = 0; i < FileList.length; i++) {
+        if (FileList[i].name === name) {
+            if (FileList[i].objectUrl) { URL.revokeObjectURL(FileList[i].objectUrl); }
+            FileList.splice(i, 1);
+            return 0;
+        }
+    }
+    return 1;
 }
