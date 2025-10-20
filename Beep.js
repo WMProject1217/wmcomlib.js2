@@ -5,7 +5,7 @@
 * FileVersion: 0.4.0
 * FileDescription: 简单波形合成子系统
 * Author: WMProject1217
-* LatestCommit: 2025-7-1
+* LatestCommit: 2025-7-2
 *
 * FOR THE DAWN THAT SHALL ARRIVE!
 */
@@ -14,6 +14,7 @@ export const id = 'WMBeep';
 export const name = 'WMBeep';
 export const version = '0.4.0';
 export const description = 'Moduled WMBeep.js';
+export const author = 'WMProject1217';
 
 let SystemContext;
 let ossquare0 = null;
@@ -72,7 +73,7 @@ export async function _init_(context) {
     console.log('[WMBeep]Initializing...');
 }
 
-export function setNodeList(nl) {
+export function setNoteList(nl) {
     notelist = nl;
 }
 

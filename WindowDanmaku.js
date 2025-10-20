@@ -14,6 +14,7 @@ export const id = 'WMWindowDanmaku';
 export const name = 'WMWindowDanmaku';
 export const version = '0.1.4';
 export const description = 'Moduled WMWindowDanmaku.js';
+export const author = 'WMProject1217';
 
 let SystemContext;
 let Container;
