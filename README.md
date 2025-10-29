@@ -5,4 +5,4 @@ wmcomlib.js JavaScript Function Library v2
 
 添加 `<script src="/lib/wmcomlib.js2/_init_.js"></script>` 可初始化该结构，并初始化库加载管理器，然后可使用 _genesis_.lib.base.LibraryLoad 加载库。
 
-100% 能工智人。
+99%+ 能工智人。
